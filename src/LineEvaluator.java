@@ -44,6 +44,20 @@ public class LineEvaluator {
                         System.out.print(Stack.get());
                         Stack.pop();
                     }
+                } else if (keywords[1].equals("LIST")) {
+                    int id = FileEvaluator.evaluateInt(keywords[2]);
+                    ArrayEvaluator.evaluateList("SIZE "+id);
+                    int length = Stack.get();
+                    Stack.pop();
+                    System.out.print("[");
+                    for (int i = 0; i < length; i++) {
+                        ArrayEvaluator.evaluateList("GET "+id+" "+i);
+                        System.out.print(Stack.get());
+                        if (i != length-1) {
+                            System.out.print(", ");
+                        }
+                        Stack.pop();
+                    } System.out.print("]");
                 }
                 break;
             case "PUSH":
@@ -330,6 +344,24 @@ public class LineEvaluator {
                 int e2 = Stack.get();
                 Stack.pop();
                 Stack.put(e1 == e2 ? 1 : 0);
+                break;
+            case "SET":
+                StringBuilder b = new StringBuilder();
+                for (int index = 1; index < keywords.length; index++) {
+                    b.append(keywords[index]);
+                    b.append(' ');
+                }
+                String s = b.toString().trim();
+                ArrayEvaluator.evaluateSet(s);
+                break;
+            case "LIST":
+                StringBuilder bld = new StringBuilder();
+                for (int index = 1; index < keywords.length; index++) {
+                    bld.append(keywords[index]);
+                    bld.append(' ');
+                }
+                String str = bld.toString().trim();
+                ArrayEvaluator.evaluateList(str);
                 break;
             case "END":
                 FileEvaluator.running = false;
