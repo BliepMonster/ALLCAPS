@@ -1,3 +1,6 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -267,6 +270,58 @@ public class LineEvaluator {
                 int d = Stack.get();
                 Stack.pop();
                 Stack.put(d-1);
+                break;
+            case "LOAD":
+                if (keywords[1].equals("FILE")) {
+                    StringBuilder stb = new StringBuilder();
+                    if (keywords[2].equals("STACK")) {
+                        while (Stack.hasItem()) {
+                            stb.append((char) Stack.get());
+                            Stack.pop();
+                        }
+                    } else {
+                        for (int in = 2; in < keywords.length; in++) {
+                            stb.append(keywords[in]);
+                            stb.append(" ");
+                        }
+                    }
+                    String path = stb.toString();
+                    int key = FileEvaluator.readers.size();
+                    try {
+                        FileEvaluator.readers.put(key, new BufferedReader(new FileReader(path)));
+                    } catch (Exception e) {
+                        System.out.println("[INTERPRETER ERROR] FILE NOT FOUND: "+path);
+                    } Stack.put(key);
+                } else if (keywords[1].equals("CHAR")) {
+                    if (keywords[2].equals("FROM")) {
+                        int id = FileEvaluator.evaluateInt(keywords[3]);
+                        BufferedReader reader = FileEvaluator.readers.get(id);
+                        try {
+                            Stack.put(reader.read());
+                        } catch (IOException e) {
+                            Stack.put(' ');
+                            System.out.println("[INTERPRETER ERROR] UNSPECIFIED");
+                        }
+                    }
+                }
+                break;
+            case "CLOSE":
+                if (keywords[1].equals("FILE")) {
+                    int id = FileEvaluator.evaluateInt(keywords[2]);
+                    BufferedReader br = FileEvaluator.readers.get(id);
+                    try {
+                        br.close();
+                    } catch (IOException e) {
+                        System.out.println("[INTERPRETER ERROR] UNSPECIFIED");
+                    }
+                    FileEvaluator.readers.remove(id);
+                } break;
+            case "EQUALS":
+                int e1 = Stack.get();
+                Stack.pop();
+                int e2 = Stack.get();
+                Stack.pop();
+                Stack.put(e1 == e2 ? 1 : 0);
                 break;
             case "END":
                 FileEvaluator.running = false;

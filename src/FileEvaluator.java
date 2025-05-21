@@ -1,3 +1,4 @@
+import java.io.BufferedReader;
 import java.util.HashMap;
 
 public class FileEvaluator {
@@ -6,6 +7,7 @@ public class FileEvaluator {
     public static boolean move = true;
     public static boolean lastConditional = true;
     public static HashMap<String, Integer> labels = new HashMap<>();
+    public static HashMap<Integer, BufferedReader> readers = new HashMap<>();
     public static void evaluate(String file) {
         Skimmer.peek(file);
         String[] lines = file.split("\n");
@@ -19,5 +21,15 @@ public class FileEvaluator {
                 e.printStackTrace();
             }
         }
+    }
+    public static int evaluateInt(String s) {
+        int val;
+        if (s.equals("STACK")) {
+            val = Stack.get();
+            Stack.pop();
+        } else {
+            val = Integer.parseInt(s);
+        }
+        return val;
     }
 }

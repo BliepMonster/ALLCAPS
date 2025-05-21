@@ -6,7 +6,7 @@ Commands:
   * PRINT CHAR ALL -> prints all items in the stack as if they were ascii codes for chars; the top integer is printed first
   * PRINT INT ALL -> prints all items in the stack from top to bottom
   * PRINT CHAR <int> -> prints the latest n chars of the stack
-  * PRINT INT <int> -> prints the latest n ints of the stack
+  * PRINT INT <int> -> prints the latest n integers of the stack
 * PUSH commands
   * PUSH INT <int> -> pushes an integer to the top of the stack
   * PUSH CHAR <char> -> pushes the ASCII value of a char to the top of the stack
@@ -52,3 +52,9 @@ Commands:
 * INCREMENT -> increments the top of the stack
 * DECREMENT -> decrements the top of the stack
 * END -> ends the program, required so you don't throw an exception
+* LOAD commands
+  * LOAD FILE <string> -> makes a reader for that file and pushes an integer key to the stack, which controls that reader
+  * LOAD CHAR FROM <int> -> loads a single char from the file specified by the integer and pushes that on the stack
+  * LOAD CHAR FROM STACK -> loads a single char from the file specified by the integer on the top of the stack, then pops that integer
+  * CLOSE FILE <int> -> closes the file associated with the integer and removes all bindings
+* EQUALS -> pops the two values on top of the stack, pushes 1 if they are equal, 0 otherwise
