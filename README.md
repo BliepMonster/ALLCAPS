@@ -7,6 +7,7 @@ Commands:
   * PRINT INT ALL -> prints all items in the stack from top to bottom
   * PRINT CHAR <int> -> prints the latest n chars of the stack
   * PRINT INT <int> -> prints the latest n integers of the stack
+  * PRINT LIST <int> -> prints the list whose ID was specified by the integer
 * PUSH commands
   * PUSH INT <int> -> pushes an integer to the top of the stack
   * PUSH CHAR <char> -> pushes the ASCII value of a char to the top of the stack
@@ -59,3 +60,12 @@ Commands:
   * LOAD CHAR FROM STACK -> loads a single char from the file specified by the integer on the top of the stack, then pops that integer
   * CLOSE FILE <int> -> closes the file associated with the integer and removes all bindings
 * EQUALS -> pops the two values on top of the stack, pushes 1 if they are equal, 0 otherwise
+* LIST commands
+  * LIST NEW -> creates a new list with an ID that is pushed on the stack
+  * LIST ADD <int> <int> -> adds the second integer to the end of the list specified by the first integer
+  * LIST GET <int> <int> -> pushes the value at the index of the second integer in the list specified by the first integer
+  * LIST SIZE <int> -> pushes the size of the list specified by the integer
+* SET commands
+  * SET NEW -> creates a new set with an ID that is pushed on the stack
+  * SET SET <int> <int> <int> -> places the third integer on the index of the second integer in the set specified by the first integer
+  * SET GET <int> <int> -> pushes the value at the index specified by the second integer, in the set specified by the first integer
