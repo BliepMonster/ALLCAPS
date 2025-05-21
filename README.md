@@ -1,5 +1,7 @@
 ALLCAPS is a custom low-level language created by me in Java.
-Commands:
+
+# COMMANDS
+
 * ALLOC <int> <int> -> loads the top of the stack in that location of the memory map and pops the stack once
 * RETRIEVE <int> <int> -> loads the item located at that location of the memory map to the stack without damaging the memory
 * PRINT commands (pops all values it prints)
