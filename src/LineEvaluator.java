@@ -85,6 +85,14 @@ public class LineEvaluator {
                     Stack.put(scanner.nextInt());
                 } else if (keywords[1].equals("CHAR")) {
                     Stack.put(scanner.next().charAt(0));
+                } else if (keywords[1].equals("LINE")) {
+                    if (keywords[2].equals("ON") && keywords[3].equals("STACK")) {
+                        String string = scanner.nextLine();
+                        char[] pushArray = string.toCharArray();
+                        for (int i = 0; i < pushArray.length; i++) {
+                            Stack.put(pushArray[pushArray.length - 1 - i]);
+                        }
+                    }
                 }
                 break;
             case "WAIT":
