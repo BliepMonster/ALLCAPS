@@ -238,7 +238,12 @@ public class LineEvaluator {
                 Stack.put((bool5 || bool6) && !(bool5 && bool6) ? 1 : 0);
                 break;
             case "PRINTLN":
-                evaluate("PRINT " + keywords[1] + " " + keywords[2]);
+                StringBuilder sb = new StringBuilder();
+                for (int i = 1; i < keywords.length; i++) {
+                    sb.append(keywords[i]);
+                    sb.append(" ");
+                }
+                evaluate("PRINT " + sb.toString().trim());
                 evaluate("NEWLINE");
                 break;
             case "NEGATE":
@@ -251,6 +256,7 @@ public class LineEvaluator {
                 break;
             case "ERROR":
                 System.out.println("[ERROR] Unexpected error on line " + (FileEvaluator.line+1));
+                evaluate("END");
                 break;
             case "INCREMENT":
                 int i = Stack.get();
