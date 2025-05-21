@@ -10,13 +10,13 @@ public class LineEvaluator {
             case "ALLOC":
                 int xAlloc = Integer.parseInt(keywords[1]);
                 int yAlloc = Integer.parseInt(keywords[2]);
-                Memory.memory[xAlloc][yAlloc] = Stack.get();
+                Memory.memory.place(xAlloc, yAlloc, Stack.get());
                 Stack.pop();
                 break;
             case "RETRIEVE":
                 int xRetrieve = Integer.parseInt(keywords[1]);
                 int yRetrieve = Integer.parseInt(keywords[2]);
-                Stack.put(Memory.memory[xRetrieve][yRetrieve]);
+                Stack.put(Memory.memory.get(xRetrieve, yRetrieve));
                 break;
             case "PRINT":
                 if (keywords[1].equals("CHAR") && keywords[2].equals("ALL")) {
@@ -109,7 +109,7 @@ public class LineEvaluator {
                     case "CELL" -> {
                         int xClear = Integer.parseInt(keywords[2]);
                         int yClear = Integer.parseInt(keywords[3]);
-                        Memory.memory[xClear][yClear] = 0;
+                        Memory.memory.place(xClear, yClear, 0);
                     }
                 }
                 break;
@@ -236,6 +236,8 @@ public class LineEvaluator {
                 Stack.pop();
                 Stack.put(-got);
                 break;
+            case "FLIPSTACK":
+                Stack.flip();
             case "ERROR":
                 System.out.println("[ERROR] Unexpected error on line " + (FileEvaluator.line+1));
             case "END":
