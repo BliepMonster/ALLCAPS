@@ -18,6 +18,7 @@ Commands:
 * INPUT commands
   * INPUT INT -> asks the user for an integer, and pushes that on the stack
   * INPUT CHAR -> asks the user for a character, and pushes that on the stack
+  * INPUT LINE ON STACK -> asks the user for a line of texts, then pushes that on the stack in reverse order
 * WAIT <int> -> Waits for n milliseconds
 * RANDOM -> pushes a random number between 0 and 255 (inclusive) on the stack
 * SUBTRACT -> pops the top two values of the stack and pushes the result of their subtraction
