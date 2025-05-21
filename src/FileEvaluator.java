@@ -1,14 +1,23 @@
+import java.util.HashMap;
+
 public class FileEvaluator {
     public static int line = 0; //INTENDED TO BE CHANGED INSIDE LINES
     public static boolean running = true;
     public static boolean move = true;
     public static boolean lastConditional = true;
+    public static HashMap<String, Integer> labels = new HashMap<>();
     public static void evaluate(String file) {
+        Skimmer.peek(file);
         String[] lines = file.split("\n");
         while (running) {
-            LineEvaluator.evaluate(lines[line]);
-            line += move ? 1 : 0;
-            move = true;
+            try {
+                LineEvaluator.evaluate(lines[line]);
+                line += move ? 1 : 0;
+                move = true;
+            } catch (RuntimeException e) {
+                System.out.println("Exception on line " + (line+1));
+                e.printStackTrace();
+            }
         }
     }
 }

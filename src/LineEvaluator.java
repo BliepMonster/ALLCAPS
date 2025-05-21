@@ -114,15 +114,20 @@ public class LineEvaluator {
                 }
                 break;
             case "GOTO":
-                if (keywords[1].equals("STACK")) {
-                    FileEvaluator.line = Stack.get()-1;
+                if (keywords[1].equals("LINE")) {
+                    if (keywords[2].equals("STACK")) {
+                        FileEvaluator.line = Stack.get() - 1;
+                        FileEvaluator.move = false;
+                        Stack.pop();
+                        break;
+                    }
+                    int lineToGoTo = Integer.parseInt(keywords[2]);
+                    FileEvaluator.line = lineToGoTo - 1;
                     FileEvaluator.move = false;
-                    Stack.pop();
-                    break;
+                } else if (keywords[1].equals("LABEL")) {
+                    int lineToGoTo = (FileEvaluator.labels.get(keywords[2]));
+                    evaluate("GOTO LINE "+lineToGoTo);
                 }
-                int lineToGoTo = Integer.parseInt(keywords[1]);
-                FileEvaluator.line = lineToGoTo-1;
-                FileEvaluator.move = false;
                 break;
             case "MULTIPLY":
                 int m1 = Stack.get();
@@ -161,8 +166,9 @@ public class LineEvaluator {
                     StringBuilder exprBuilder = new StringBuilder();
                     for (int i = 2; i < keywords.length; i++) {
                         exprBuilder.append(keywords[i]);
+                        exprBuilder.append(" ");
                     }
-                    String expr = exprBuilder.toString();
+                    String expr = exprBuilder.toString().trim();
                     int lastStack = Stack.get();
                     Stack.pop();
                     boolean eval = lastStack != 0;
@@ -198,6 +204,10 @@ public class LineEvaluator {
                 break;
             case "NEWLINE":
                 System.out.println();
+                break;
+            case "SPACE":
+                System.out.print(" ");
+                break;
             case "AND":
                 boolean bool1 = Stack.get() != 0;
                 Stack.pop();
@@ -238,8 +248,20 @@ public class LineEvaluator {
                 break;
             case "FLIPSTACK":
                 Stack.flip();
+                break;
             case "ERROR":
                 System.out.println("[ERROR] Unexpected error on line " + (FileEvaluator.line+1));
+                break;
+            case "INCREMENT":
+                int i = Stack.get();
+                Stack.pop();
+                Stack.put(i+1);
+                break;
+            case "DECREMENT":
+                int d = Stack.get();
+                Stack.pop();
+                Stack.put(d-1);
+                break;
             case "END":
                 FileEvaluator.running = false;
                 break;
