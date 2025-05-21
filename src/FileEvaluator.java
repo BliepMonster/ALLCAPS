@@ -10,6 +10,9 @@ public class FileEvaluator {
     public static HashMap<Integer, BufferedReader> readers = new HashMap<>();
     public static void evaluate(String file) {
         Skimmer.peek(file);
+        if (checkString(file)) {
+            throw new RuntimeException("File contains lowercase letters.");
+        }
         String[] lines = file.split("\n");
         while (running) {
             try {
@@ -31,5 +34,15 @@ public class FileEvaluator {
             val = Integer.parseInt(s);
         }
         return val;
+    }
+    private static boolean checkString(String str) {
+        char ch;
+        for(int i=0;i < str.length();i++) {
+            ch = str.charAt(i);
+            if (Character.isLowerCase(ch)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
