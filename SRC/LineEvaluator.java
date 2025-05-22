@@ -289,40 +289,45 @@ public class LineEvaluator {
                 Stack.put(d-1);
                 break;
             case "LOAD":
-                if (keywords[1].equals("FILE")) {
-                    StringBuilder stb = new StringBuilder(evaluator.root);
-                    if (keywords[2].equals("STACK")) {
-                        while (Stack.hasItem()) {
-                            stb.append((char) Stack.get());
-                            Stack.pop();
+                switch (keywords[1]) {
+                    case "FILE" -> {
+                        StringBuilder stb = new StringBuilder(evaluator.root);
+                        if (keywords[2].equals("STACK")) {
+                            while (Stack.hasItem()) {
+                                stb.append((char) Stack.get());
+                                Stack.pop();
+                            }
+                        } else {
+                            for (int in = 2; in < keywords.length; in++) {
+                                stb.append(keywords[in]);
+                                stb.append(" ");
+                            }
                         }
-                    } else {
-                        for (int in = 2; in < keywords.length; in++) {
-                            stb.append(keywords[in]);
-                            stb.append(" ");
-                        }
-                    }
-                    String path = stb.toString();
-                    int key = evaluator.readers.size();
-                    try {
-                        evaluator.readers.put(key, new BufferedReader(new FileReader(path)));
-                    } catch (Exception e) {
-                        System.out.println("[INTERPRETER ERROR] FILE NOT FOUND: "+path);
-                    } Stack.put(key);
-                } else if (keywords[1].equals("CHAR")) {
-                    if (keywords[2].equals("FROM")) {
-                        int id = FileEvaluator.evaluateInt(keywords[3]);
-                        BufferedReader reader = evaluator.readers.get(id);
+                        String path = stb.toString();
+                        int key = evaluator.readers.size();
                         try {
-                            Stack.put(reader.read());
-                        } catch (IOException e) {
-                            Stack.put(' ');
-                            System.out.println("[INTERPRETER ERROR] UNSPECIFIED");
+                            evaluator.readers.put(key, new BufferedReader(new FileReader(path)));
+                        } catch (Exception e) {
+                            System.out.println("[INTERPRETER ERROR] FILE NOT FOUND: " + path);
+                        }
+                        Stack.put(key);
+                    }
+                    case "CHAR" -> {
+                        if (keywords[2].equals("FROM")) {
+                            int id = FileEvaluator.evaluateInt(keywords[3]);
+                            BufferedReader reader = evaluator.readers.get(id);
+                            try {
+                                Stack.put(reader.read());
+                            } catch (IOException e) {
+                                Stack.put(' ');
+                                System.out.println("[INTERPRETER ERROR] UNSPECIFIED");
+                            }
                         }
                     }
-                } else if (keywords[1].equals("FROM")) {
-                    if (keywords[2].equals("ASSOCIATION")) {
-                        Stack.put(Memory.associated.get(keywords[3]));
+                    case "FROM" -> {
+                        if (keywords[2].equals("ASSOCIATION")) {
+                            Stack.put(Memory.associated.get(keywords[3]));
+                        }
                     }
                 }
                 break;
