@@ -103,9 +103,7 @@ public class LineEvaluator {
                             throw new RuntimeException("WHAT THE FUCK IS UP WITH LINE "+(evaluator.line+1));
                         }
                     }
-                    default -> {
-                        throw new RuntimeException("WHAT THE FUCK IS UP WITH LINE "+evaluator.line);
-                    }
+                    default -> throw new RuntimeException("WHAT THE FUCK IS UP WITH LINE "+evaluator.line);
                 }
                 break;
             case "POP":
@@ -423,7 +421,12 @@ public class LineEvaluator {
             case "LOAD":
                 switch (keywords[1]) {
                     case "FILE" -> {
-                        StringBuilder stb = new StringBuilder(evaluator.root);
+                        StringBuilder stb;
+                        try {
+                           stb = new StringBuilder(evaluator.root);
+                        } catch (Exception e) {
+                            stb = new StringBuilder();
+                        }
                         if (keywords[2].equals("STACK")) {
                             if (keywords.length != 3) {
                                 throw new RuntimeException("WHAT THE FUCK IS UP WITH LINE "+(evaluator.line+1));
