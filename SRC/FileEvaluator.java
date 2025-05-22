@@ -2,26 +2,33 @@ import java.io.BufferedReader;
 import java.util.HashMap;
 
 public class FileEvaluator {
-    public static int line = 0; //INTENDED TO BE CHANGED INSIDE LINES
-    public static boolean running = true;
-    public static boolean move = true;
-    public static boolean lastConditional = true;
-    public static HashMap<String, Integer> labels = new HashMap<>();
-    public static HashMap<Integer, BufferedReader> readers = new HashMap<>();
-    public static void evaluate(String file) {
-        Skimmer.peek(file);
+    public int line = 0; //INTENDED TO BE CHANGED INSIDE LINES
+    public boolean running = true;
+    public boolean move = true;
+    public boolean lastConditional = true;
+    public HashMap<String, Integer> labels = new HashMap<>();
+    public HashMap<Integer, BufferedReader> readers = new HashMap<>();
+    public HashMap<String, String> functions = new HashMap<>();
+    public HashMap<String, Integer> funcLines = new HashMap<>();
+    public HashMap<Integer, String> linked = new HashMap<>();
+    public Skimmer skimmer = new Skimmer();
+    public void evaluate(String file) {
+        skimmer.peek(file, this);
         if (checkString(file)) {
             throw new RuntimeException("File contains lowercase letters.");
         }
         String[] lines = file.split("\n");
         while (running) {
             try {
-                LineEvaluator.evaluate(lines[line]);
+                if (!skimmer.skipped.contains(line)) {
+                    LineEvaluator.evaluate(lines[line].trim(), this);
+                }
                 line += move ? 1 : 0;
                 move = true;
             } catch (RuntimeException e) {
                 System.out.println("Exception on line " + (line+1));
                 e.printStackTrace();
+                return;
             }
         }
     }

@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class LineEvaluator {
     public static Scanner scanner = new Scanner(System.in);
     public static Random random = new Random();
-    public static void evaluate(String line) {
+    public static void evaluate(String line, FileEvaluator evaluator) {
         String[] keywords = line.split(" ");
         switch (keywords[0]) {
             case "ALLOC":
@@ -39,7 +39,7 @@ public class LineEvaluator {
                         Stack.pop();
                     }
                 } else if (keywords[1].equals("INT")) {
-                    int count = Integer.parseInt(keywords[2]);
+                    int count = FileEvaluator.evaluateInt(keywords[2]);
                     for (int i = 0; i < count; i++) {
                         System.out.print(Stack.get());
                         Stack.pop();
@@ -114,7 +114,7 @@ public class LineEvaluator {
                     Thread.sleep(Integer.parseInt(keywords[1]));
                 } catch (InterruptedException e) {
                     System.out.println("[ERROR]: INTERRUPTED");
-                    evaluate("END");
+                    evaluate("END", evaluator);
                 }
                 break;
             case "RANDOM":
@@ -141,17 +141,17 @@ public class LineEvaluator {
             case "GOTO":
                 if (keywords[1].equals("LINE")) {
                     if (keywords[2].equals("STACK")) {
-                        FileEvaluator.line = Stack.get() - 1;
-                        FileEvaluator.move = false;
+                        evaluator.line = Stack.get() - 1;
+                        evaluator.move = false;
                         Stack.pop();
                         break;
                     }
                     int lineToGoTo = Integer.parseInt(keywords[2]);
-                    FileEvaluator.line = lineToGoTo - 1;
-                    FileEvaluator.move = false;
+                    evaluator.line = lineToGoTo - 1;
+                    evaluator.move = false;
                 } else if (keywords[1].equals("LABEL")) {
-                    int lineToGoTo = (FileEvaluator.labels.get(keywords[2]));
-                    evaluate("GOTO LINE "+lineToGoTo);
+                    int lineToGoTo = (evaluator.labels.get(keywords[2]));
+                    evaluate("GOTO LINE "+lineToGoTo, evaluator);
                 }
                 break;
             case "MULTIPLY":
@@ -182,11 +182,11 @@ public class LineEvaluator {
                         case ">=" -> left >= right;
                         default -> false;
                     };
-                    FileEvaluator.lastConditional = execute;
+                    evaluator.lastConditional = execute;
                     if (!execute) {
                         break;
                     }
-                    evaluate(line.split(":")[1]);
+                    evaluate(line.split(":")[1], evaluator);
                 } else if (keywords[1].equals("STACK")) {
                     StringBuilder exprBuilder = new StringBuilder();
                     for (int i = 2; i < keywords.length; i++) {
@@ -197,9 +197,9 @@ public class LineEvaluator {
                     int lastStack = Stack.get();
                     Stack.pop();
                     boolean eval = lastStack != 0;
-                    FileEvaluator.lastConditional = eval;
+                    evaluator.lastConditional = eval;
                     if (eval) {
-                        evaluate(expr);
+                        evaluate(expr, evaluator);
                     }
                 }
                 break;
@@ -216,9 +216,9 @@ public class LineEvaluator {
                     builder.append(keywords[i]);
                     builder.append(" ");
                 }
-                if (!FileEvaluator.lastConditional) {
-                    evaluate(builder.toString());
-                } FileEvaluator.lastConditional = !FileEvaluator.lastConditional;
+                if (!evaluator.lastConditional) {
+                    evaluate(builder.toString(), evaluator);
+                } evaluator.lastConditional = !evaluator.lastConditional;
                 break;
             case "DEBUG":
                 if (keywords[1].equals("STACK")) {
@@ -268,8 +268,8 @@ public class LineEvaluator {
                     sb.append(keywords[i]);
                     sb.append(" ");
                 }
-                evaluate("PRINT " + sb.toString().trim());
-                evaluate("NEWLINE");
+                evaluate("PRINT " + sb.toString().trim(), evaluator);
+                evaluate("NEWLINE", evaluator);
                 break;
             case "NEGATE":
                 int got = Stack.get();
@@ -280,8 +280,8 @@ public class LineEvaluator {
                 Stack.flip();
                 break;
             case "ERROR":
-                System.out.println("[ERROR] Unexpected error on line " + (FileEvaluator.line+1));
-                evaluate("END");
+                System.out.println("[ERROR] Unexpected error on line " + (evaluator.line+1));
+                evaluate("END", evaluator);
                 break;
             case "INCREMENT":
                 int i = Stack.get();
@@ -308,16 +308,16 @@ public class LineEvaluator {
                         }
                     }
                     String path = stb.toString();
-                    int key = FileEvaluator.readers.size();
+                    int key = evaluator.readers.size();
                     try {
-                        FileEvaluator.readers.put(key, new BufferedReader(new FileReader(path)));
+                        evaluator.readers.put(key, new BufferedReader(new FileReader(path)));
                     } catch (Exception e) {
                         System.out.println("[INTERPRETER ERROR] FILE NOT FOUND: "+path);
                     } Stack.put(key);
                 } else if (keywords[1].equals("CHAR")) {
                     if (keywords[2].equals("FROM")) {
                         int id = FileEvaluator.evaluateInt(keywords[3]);
-                        BufferedReader reader = FileEvaluator.readers.get(id);
+                        BufferedReader reader = evaluator.readers.get(id);
                         try {
                             Stack.put(reader.read());
                         } catch (IOException e) {
@@ -330,13 +330,13 @@ public class LineEvaluator {
             case "CLOSE":
                 if (keywords[1].equals("FILE")) {
                     int id = FileEvaluator.evaluateInt(keywords[2]);
-                    BufferedReader br = FileEvaluator.readers.get(id);
+                    BufferedReader br = evaluator.readers.get(id);
                     try {
                         br.close();
                     } catch (IOException e) {
                         System.out.println("[INTERPRETER ERROR] UNSPECIFIED");
                     }
-                    FileEvaluator.readers.remove(id);
+                    evaluator.readers.remove(id);
                 } break;
             case "EQUALS":
                 int e1 = Stack.get();
@@ -363,8 +363,47 @@ public class LineEvaluator {
                 String str = bld.toString().trim();
                 ArrayEvaluator.evaluateList(str);
                 break;
+            case "SHIFT":
+                String direction = keywords[1];
+                int amount = FileEvaluator.evaluateInt(keywords[2]);
+                int subject = Stack.get();
+                Stack.pop();
+                if (direction.equals("LEFT")) {
+                    Stack.put(subject << amount);
+                }
+                else if (direction.equals("RIGHT")) {
+                    Stack.put(subject >> amount);
+                }
+                break;
+            case "EXECUTE":
+                if (keywords[1].equals("FUNCTION")) {
+                    String function = keywords[2];
+                    FunctionEvaluator.evaluate(function, evaluator.line, evaluator);
+                }
+                else if (keywords[1].equals("PROGRAM")) {
+                    int ID = FileEvaluator.evaluateInt(keywords[2]);
+                    FunctionEvaluator.evaluate(evaluator.linked.get(ID));
+                }
+                break;
+            case "INIT":
+                if (keywords[1].equals("PROGRAM")) {
+                    StringBuilder fileBuilder = new StringBuilder();
+                    try (BufferedReader reader = new BufferedReader(new FileReader(keywords[2]))) {
+                        String l;
+                        while ((l = reader.readLine()) != null) {
+                            fileBuilder.append(l).append("\n");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    String file = fileBuilder.toString();
+                    int pos = evaluator.linked.size();
+                    evaluator.linked.put(pos, file);
+                    Stack.put(pos);
+                }
+                break;
             case "END":
-                FileEvaluator.running = false;
+                evaluator.running = false;
                 break;
         }
     }

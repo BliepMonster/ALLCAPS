@@ -20,7 +20,7 @@ public class ArrayEvaluator {
                     Stack.put(0);
                 }
                 break;
-            case "SET":
+            case "PUT":
                 int ID = FileEvaluator.evaluateInt(keywords[1])+1000000;
                 int place = FileEvaluator.evaluateInt(keywords[2]);
                 int item = FileEvaluator.evaluateInt(keywords[3]);

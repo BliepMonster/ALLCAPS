@@ -69,5 +69,5 @@ ALLCAPS is a custom low-level language created by me in Java.
   * LIST SIZE <int> -> pushes the size of the list specified by the integer
 * SET commands
   * SET NEW -> creates a new set with an ID that is pushed on the stack
-  * SET SET <int> <int> <int> -> places the third integer on the index of the second integer in the set specified by the first integer
+  * SET PUT <int> <int> <int> -> places the third integer on the index of the second integer in the set specified by the first integer
   * SET GET <int> <int> -> pushes the value at the index specified by the second integer, in the set specified by the first integer

@@ -18,6 +18,6 @@ public class Main {
             e.printStackTrace();
         }
         String file = fileBuilder.toString();
-        FileEvaluator.evaluate(file);
+        new FileEvaluator().evaluate(file);
     }
 }
