@@ -18,8 +18,8 @@ public class LineEvaluator {
                 if (keywords.length != 3) {
                     throw new RuntimeException("WHAT THE FUCK IS UP WITH LINE "+(evaluator.line+1));
                 }
-                int xAlloc = Integer.parseInt(keywords[1]);
-                int yAlloc = Integer.parseInt(keywords[2]);
+                int xAlloc = FileEvaluator.evaluateInt(keywords[1]);
+                int yAlloc = FileEvaluator.evaluateInt(keywords[2]);
                 Memory.memory.place(xAlloc, yAlloc, Stack.get());
                 Stack.pop();
                 break;
@@ -102,6 +102,9 @@ public class LineEvaluator {
                         } if (split.length != 2) {
                             throw new RuntimeException("WHAT THE FUCK IS UP WITH LINE "+(evaluator.line+1));
                         }
+                    }
+                    default -> {
+                        throw new RuntimeException("WHAT THE FUCK IS UP WITH LINE "+evaluator.line);
                     }
                 }
                 break;
@@ -590,7 +593,7 @@ public class LineEvaluator {
             case "FUNCTION", " ", "", "QUIT", "LABEL":
                 break;
             default:
-                throw new RuntimeException(keywords[0] + " IS NOT VALID IN THIS CONTEXT");
+                throw new RuntimeException("WHAT THE FUCK IS UP WITH LINE "+evaluator.line);
         }
     }
 }
