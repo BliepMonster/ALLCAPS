@@ -65,12 +65,7 @@ public class LineEvaluator {
                     case "INT" -> Stack.put(Integer.parseInt(keywords[2]));
                     case "CHAR" -> Stack.put(keywords[2].toCharArray()[0]);
                     case "STRING" -> {
-                        StringBuilder builder = new StringBuilder();
-                        for (int i = 2; i < keywords.length; i++) {
-                            builder.append(keywords[i]);
-                            builder.append(" ");
-                        }
-                        String string = builder.toString().trim();
+                        String string = line.split("#")[1];
                         char[] pushArray = string.toCharArray();
                         for (int i = 0; i < pushArray.length; i++) {
                             Stack.put(pushArray[pushArray.length - 1 - i]);
@@ -295,7 +290,7 @@ public class LineEvaluator {
                 break;
             case "LOAD":
                 if (keywords[1].equals("FILE")) {
-                    StringBuilder stb = new StringBuilder();
+                    StringBuilder stb = new StringBuilder(evaluator.root);
                     if (keywords[2].equals("STACK")) {
                         while (Stack.hasItem()) {
                             stb.append((char) Stack.get());
@@ -324,6 +319,10 @@ public class LineEvaluator {
                             Stack.put(' ');
                             System.out.println("[INTERPRETER ERROR] UNSPECIFIED");
                         }
+                    }
+                } else if (keywords[1].equals("FROM")) {
+                    if (keywords[2].equals("ASSOCIATION")) {
+                        Stack.put(Memory.associated.get(keywords[3]));
                     }
                 }
                 break;
@@ -388,7 +387,7 @@ public class LineEvaluator {
             case "INIT":
                 if (keywords[1].equals("PROGRAM")) {
                     StringBuilder fileBuilder = new StringBuilder();
-                    try (BufferedReader reader = new BufferedReader(new FileReader(keywords[2]))) {
+                    try (BufferedReader reader = new BufferedReader(new FileReader(evaluator.root+keywords[2]))) {
                         String l;
                         while ((l = reader.readLine()) != null) {
                             fileBuilder.append(l).append("\n");
@@ -400,6 +399,14 @@ public class LineEvaluator {
                     int pos = evaluator.linked.size();
                     evaluator.linked.put(pos, file);
                     Stack.put(pos);
+                }
+                break;
+            case "ROOT":
+                evaluator.root = keywords[1];
+                break;
+            case "ASSOCIATE":
+                if (keywords[2].equals("WITH")) {
+                    Memory.associated.put(keywords[3], FileEvaluator.evaluateInt(keywords[1]));
                 }
                 break;
             case "END":

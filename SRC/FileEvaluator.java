@@ -12,6 +12,7 @@ public class FileEvaluator {
     public HashMap<String, Integer> funcLines = new HashMap<>();
     public HashMap<Integer, String> linked = new HashMap<>();
     public Skimmer skimmer = new Skimmer();
+    public String root;
     public void evaluate(String file) {
         skimmer.peek(file, this);
         if (checkString(file)) {

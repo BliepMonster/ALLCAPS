@@ -29,4 +29,7 @@ public class FunctionEvaluator {
         FileEvaluator evaluator1 = new FileEvaluator();
         evaluator1.evaluate(source);
     }
+    public static String trimString(String header) {
+        return header.startsWith("#") ? header.substring(1) : header;
+    }
 }
