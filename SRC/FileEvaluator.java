@@ -16,7 +16,7 @@ public class FileEvaluator {
     public void evaluate(String file) {
         skimmer.peek(file, this);
         if (checkString(file)) {
-            throw new RuntimeException("File contains lowercase letters.");
+            throw new RuntimeException("FILE CONTAINS FORBIDDEN SYMBOL: LOWERCASE LETTER");
         }
         String[] lines = file.split("\n");
         while (running) {
