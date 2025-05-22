@@ -55,6 +55,24 @@ public class ArrayEvaluator {
                 int list = FileEvaluator.evaluateInt(keywords[1]);
                 Stack.put(lists.get(list));
                 break;
+            case "CLEAR":
+                int toClear = FileEvaluator.evaluateInt(keywords[1]);
+                int length = lists.get(toClear);
+                for (int i = 0; i < length; i++) {
+                    Memory.memory.place(toClear+2000000, i, 0);
+                }
+                break;
+            case "CONTAINS":
+                int listID = FileEvaluator.evaluateInt(keywords[1]);
+                int contained = FileEvaluator.evaluateInt(keywords[2]);
+                for (int i = 0; i < lists.get(listID); i++) {
+                    if (Memory.memory.get(listID+2000000, i) == contained) {
+                        Stack.put(1);
+                        return;
+                    }
+                }
+                Stack.put(0);
+                break;
         }
     }
 }
